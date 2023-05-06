@@ -5,8 +5,8 @@ import math
 x_resolution = 450
 x_width_in_mm = 150
 
-img = Image.open('Bilder/leo.jpg')
-f = open("Output/test.gcode", "w")
+img = Image.open('Bilder/sloth_1.jpg')
+f = open("Output/sloth_1.gcode", "w")
 
 scaling = x_width_in_mm / x_resolution
 
@@ -37,7 +37,7 @@ def gcode(value, length, yvalue):
             f.write('G01 X%.4f Y%.4f Z%.2f F1200 \n'% (x_increment * scaling,(math.sin(b*x)-temp_y) * scaling, 0))
         
         f.write('G90 (Change to absolut coordinates) \n')
-        f.write('G01  Y%.4f  F1200 \n'% ((-3*yvalue + 3) * scaling))
+        f.write('G01  Y%.4f  F1200 \n'% ((-3*yvalue + 3) * scaling + 155))
         f.write('G91 (Change to incremental coordinates) \n')
 
 
@@ -91,8 +91,11 @@ print("Done converting picture")
 
 print("Start generating g-code")
 
+f.write('M3 \n')
+f.write('G28 \n')
+f.write('G21 (All units in mm) \n')
 f.write('G00 Z9.000000 \n')
-# f.write('G00 X96.352689 Y154.863781 \n')
+f.write('G00 X97 Y155\n')
 f.write('G00 X0 Y0 \n')
 f.write('G01 Z5.000000 F100.0(Penetrate) \n')
 f.write('G91 (Change to incremental coordinates) \n')
@@ -109,11 +112,16 @@ for y in range(len(bitmap)):
     # begin a new line
     f.write('G90 (Change to absolut coordinates) \n')
     f.write('G00 Z%.2f \n' % (9))
-    f.write('G00 X%.2f Y%.2f \n'% (0,( -3*y) * scaling))
+    f.write('G00 X%.2f Y%.2f \n'% (97,((-3*y) * scaling)+155))
     f.write('G01 Z5.000000 F100.0(Penetrate) \n')
     f.write('G91 (Change to incremental coordinates) \n')
 
-
+f.write('G90 (Change to absolut coordinates) \n')
+f.write('G00 Z9.000000 \n')
+f.write('(Footer) \n')
+f.write('M5 \n')
+f.write('G00 X0.0000 Y0.0000 \n')
+f.write('M2 \n')
 
 f.close()
 
